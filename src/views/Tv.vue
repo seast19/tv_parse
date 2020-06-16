@@ -10,7 +10,7 @@
 					<el-menu-item>视频解析</el-menu-item>
 				</el-menu>
 
-				<div class="media-box">
+				<div class="media-box ">
 					<!-- iframe -->
 					<div class="">
 						<iframe
@@ -38,7 +38,7 @@
 						</el-form-item>
 						<el-form-item prop="url">
 							<el-input
-								v-model="formValue.url"
+								v-model.trim="formValue.url"
 								placeholder="视频地址"
 							></el-input>
 						</el-form-item>
@@ -54,12 +54,27 @@
 						<div slot="header" class="">
 							<span>历史记录</span>
 						</div>
-						<div v-for="item in histories" :key="item" class="">
+						<div v-for="(item, index) in histories" :key="index">
 							<p>{{ item.title }}</p>
-							<p>{{ item.url }}</p>
+							<p>
+								{{ item.url }}
+								<el-tooltip
+									class="item"
+									effect="dark"
+									content="点击复制到输入框"
+									placement="top-start"
+								>
+									<i
+										class="el-icon-document-copy"
+										@click="onCopy(item.url)"
+									></i>
+								</el-tooltip>
+							</p>
+							<el-divider></el-divider>
 						</div>
 					</el-card>
 					<!-- footer -->
+					<p style="color:#C0C4CC;text-align: center">Copyright © 2019 桑易</p>
 				</div>
 			</div></el-col
 		>
@@ -67,11 +82,14 @@
 </template>
 
 <script>
+// 解析地址
 const xuanlu = {
 	'1': 'http://jqaaa.com/jx.php?url=',
 	'2': 'https://api.spjx.live/?url=',
 	'3': 'http://j.zz22x.com/jx/?url='
 }
+
+// import  './plugins/axios'
 
 export default {
 	name: 'Tv',
@@ -108,44 +126,65 @@ export default {
 				}
 			})
 		},
+
+		// 获取历史记录
+		getHistories() {
+			this.histories = JSON.parse(localStorage.getItem('histories')) || []
+		},
+
 		// 设置历史记录
-		setHistory(url) {},
+		async setHistory(url) {
+			let histories = JSON.parse(localStorage.getItem('histories')) || []
+
+			let data = await this.getTitle(url)
+
+			if (histories[0] && histories[0].url === url) {
+				return
+			}
+
+			histories.unshift({
+				title: data.data.title,
+				url: url
+			})
+
+			histories = histories.slice(0, 3)
+
+			localStorage.setItem('histories', JSON.stringify(histories))
+
+			this.getHistories()
+		},
 
 		// 获取title
-		getTitle() {
-			let _this = this
-			return new Promise((reslove, reject) => {
-				$.ajax({
-					url: 'http://tvprase.seast.net/', //腾讯云函数
-					// url: 'https://1116304423746548.cn-hangzhou.fc.aliyuncs.com/2016-08-15/proxy/webTools/get-video-site-title/',
-					data: {
-						url: _this.inputUrl
-					},
-					dataType: 'json',
-					success(res) {
-						// console.log(res);
-						reslove(res.title)
-					},
-					error(res) {
-						console.log(res)
-						reslove('无')
-					}
-				})
+		getTitle(url) {
+			return this.$axios({
+				method: 'get',
+				url:
+					'https://service-4yrjp0u8-1254302252.gz.apigw.tencentcs.com/release/tv-prase',
+				params: {
+					url: url
+				}
+			})
+		},
+
+		// 复制url到input
+		onCopy(url) {
+			this.formValue.url = url
+			this.$message({
+				message: '已复制地址到输入框',
+				type: 'success'
 			})
 		}
 	},
-	mounted: {}
+	mounted() {
+		// this.setHistory('https://v.qq.com/x/cover/mzc00200rxjna4e.html')
+		this.getHistories()
+	}
 }
 </script>
 
 <style scoped>
 .title-box {
 	margin-bottom: 10px;
-}
-
-.main-box {
-	text-align: center;
-	text-align: -moz-center;
 }
 
 .form-box {
@@ -157,12 +196,31 @@ export default {
 	text-align: left;
 }
 
+.history-box p {
+	margin: 0;
+	line-height: 24px;
+}
+
+.history-box p:nth-child(2) {
+	color: #606266;
+}
+
+.el-divider {
+	margin-top: 15px;
+	margin-bottom: 15px;
+}
+
+.media-box {
+	margin-left: auto;
+	margin-right: auto;
+}
+
 @media screen and (max-width: 768px) {
 	.media-box {
 		width: 100%;
 	}
 	.iframe-item {
-		height: 220px;
+		height: 232px;
 		width: 100%;
 	}
 }
@@ -173,7 +231,7 @@ export default {
 	}
 
 	.iframe-item {
-		height: 343px;
+		height: 373px;
 		width: 100%;
 	}
 }
@@ -184,7 +242,7 @@ export default {
 	}
 
 	.iframe-item {
-		height: 411px;
+		height: 440px;
 		width: 100%;
 	}
 }

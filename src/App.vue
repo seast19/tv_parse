@@ -9,8 +9,16 @@ export default {
 	name: 'app',
 	components: {
 		Tv
+	},
+	mounted() {
+		document.title = '视频解析 - 桑易'
 	}
 }
 </script>
 
-<style></style>
+<style>
+body {
+	font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB',
+		'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
+}
+</style>
