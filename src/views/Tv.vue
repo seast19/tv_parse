@@ -65,7 +65,7 @@
 									placement="top-start"
 								>
 									<i
-										class="el-icon-document-copy"
+										class="el-icon-document-copy icon-copy"
 										@click="onCopy(item.url)"
 									></i>
 								</el-tooltip>
@@ -74,7 +74,7 @@
 						</div>
 					</el-card>
 					<!-- footer -->
-					<p style="color:#C0C4CC;text-align: center">Copyright © 2019 桑易</p>
+					<p style="color:#C0C4CC;text-align: center">Copyright © 2020 桑易</p>
 				</div>
 			</div></el-col
 		>
@@ -89,8 +89,6 @@ const xuanlu = {
 	'3': 'http://j.zz22x.com/jx/?url='
 }
 
-// import  './plugins/axios'
-
 export default {
 	name: 'Tv',
 	data() {
@@ -102,9 +100,10 @@ export default {
 			rules: {
 				url: [{ required: true, message: '请输入视频地址', trigger: 'blur' }]
 			},
-			fullUrl: xuanlu['1'],
 
-			histories: []
+			fullUrl: xuanlu['1'], //拼接后的完整地址
+
+			histories: [] //历史记录
 		}
 	},
 	methods: {
@@ -114,15 +113,12 @@ export default {
 				if (valid) {
 					this.fullUrl = xuanlu[this.formValue.line] + this.formValue.url
 
-					this.setHistory(this.formValue.url)
-
 					this.$message({
 						message: '开始播放',
 						type: 'success'
 					})
-				} else {
-					console.log('error submit!!')
-					return false
+
+					this.setHistory(this.formValue.url)
 				}
 			})
 		},
@@ -136,16 +132,23 @@ export default {
 		async setHistory(url) {
 			let histories = JSON.parse(localStorage.getItem('histories')) || []
 
-			let data = await this.getTitle(url)
-
+			// 最近一条记录重复则不添加
 			if (histories[0] && histories[0].url === url) {
 				return
 			}
 
-			histories.unshift({
-				title: data.data.title,
-				url: url
-			})
+			try {
+				let data = await this.getTitle(url)
+				histories.unshift({
+					title: data.data.title,
+					url: url
+				})
+			} catch {
+				histories.unshift({
+					title: '?_?',
+					url: url
+				})
+			}
 
 			histories = histories.slice(0, 3)
 
@@ -206,8 +209,12 @@ export default {
 }
 
 .el-divider {
-	margin-top: 15px;
-	margin-bottom: 15px;
+	margin-top: 8px;
+	margin-bottom: 8px;
+}
+
+.icon-copy {
+	color: #409eff;
 }
 
 .media-box {
