@@ -10,8 +10,8 @@ export default {
 	components: {
 		Tv
 	},
-	mounted() {
-		document.title = '视频解析 - 桑易'
+	created() {
+		// document.title = '视频解析 - 桑易'
 	}
 }
 </script>

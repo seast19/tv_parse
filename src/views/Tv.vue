@@ -50,7 +50,7 @@
 					</el-form>
 
 					<!-- history -->
-					<el-card class="media-box history-box">
+					<el-card class="media-box history-box" v-show="histories.length>0">
 						<div slot="header" class="">
 							<span>历史记录</span>
 						</div>
