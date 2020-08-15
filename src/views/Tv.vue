@@ -6,8 +6,15 @@
 			:md="{ span: 16, offset: 4 }"
 			><div class="main-box">
 				<!-- title -->
-				<el-menu mode="horizontal" class="title-box">
-					<el-menu-item>视频解析</el-menu-item>
+				<el-menu
+					text-color="#606266"
+					mode="horizontal"
+					style="margin-bottom: 20px;"
+				>
+					<el-menu-item
+						><span style="font-size:20px">视频解析 </span>
+						<span style="color:#909399">v1.0</span></el-menu-item
+					>
 				</el-menu>
 
 				<div class="media-box ">
@@ -34,13 +41,11 @@
 								<el-option label="线路一🔥" value="1"></el-option>
 								<el-option label="线路二" value="2"></el-option>
 								<el-option label="线路三" value="3"></el-option>
+								<el-option label="线路四" value="4"></el-option>
 							</el-select>
 						</el-form-item>
 						<el-form-item prop="url">
-							<el-input
-								v-model.trim="formValue.url"
-								placeholder="视频地址"
-							></el-input>
+							<el-input v-model.trim="formValue.url" placeholder="视频地址"></el-input>
 						</el-form-item>
 						<el-form-item>
 							<el-button type="primary" @click="submitForm('formValue')"
@@ -50,24 +55,27 @@
 					</el-form>
 
 					<!-- history -->
-					<el-card class="media-box history-box" v-show="histories.length>0">
+					<el-card class="media-box history-box" v-show="histories.length > 0">
 						<div slot="header" class="">
 							<span>历史记录</span>
 						</div>
 						<div v-for="(item, index) in histories" :key="index">
-							<p>{{ item.title }}</p>
 							<p>
-								{{ item.url }}
+								<span>
+									{{ item.title }}
+								</span>
+							</p>
+							<p>
+								<span style="color:#999">
+									{{ item.url }}
+								</span>
 								<el-tooltip
 									class="item"
 									effect="dark"
 									content="点击复制到输入框"
 									placement="top-start"
 								>
-									<i
-										class="el-icon-document-copy icon-copy"
-										@click="onCopy(item.url)"
-									></i>
+									<i class="el-icon-s-promotion icon-copy" @click="onCopy(item.url)"></i>
 								</el-tooltip>
 							</p>
 							<el-divider></el-divider>
@@ -84,9 +92,10 @@
 <script>
 // 解析地址
 const xuanlu = {
-	'1': 'http://jqaaa.com/jx.php?url=',
-	'2': 'https://api.spjx.live/?url=',
-	'3': 'http://j.zz22x.com/jx/?url='
+	'1': 'http://jx.du2.cc/?url=',
+	'2': 'http://jqaaa.com/jx.php?url=',
+	'3': 'http://j.zz22x.com/jx/?url=',
+	'4': 'http://nitian9.com/?url='
 }
 
 export default {
@@ -101,7 +110,7 @@ export default {
 				url: [{ required: true, message: '请输入视频地址', trigger: 'blur' }]
 			},
 
-			fullUrl: xuanlu['1'], //拼接后的完整地址
+			fullUrl: xuanlu['2'], //拼接后的完整地址
 
 			histories: [] //历史记录
 		}
@@ -179,17 +188,12 @@ export default {
 		}
 	},
 	mounted() {
-		// this.setHistory('https://v.qq.com/x/cover/mzc00200rxjna4e.html')
 		this.getHistories()
 	}
 }
 </script>
 
 <style scoped>
-.title-box {
-	margin-bottom: 10px;
-}
-
 .form-box {
 	text-align: center;
 	margin-top: 20px;
@@ -252,5 +256,10 @@ export default {
 		height: 440px;
 		width: 100%;
 	}
+}
+
+p {
+	word-wrap: break-word;
+	/* word-break: break-all; */
 }
 </style>
